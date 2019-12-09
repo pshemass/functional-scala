@@ -14,6 +14,7 @@ lazy val root = (project in file("."))
     dockerRepository := Some("rzbikson"),
     libraryDependencies += scalaTest % Test,
     libraryDependencies += "dev.zio" %% "zio-keeper" % "0.0.0+94-26973556",
+    libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
     libraryDependencies += "io.prometheus" % "simpleclient" % "0.6.0",
     libraryDependencies += "io.prometheus" % "simpleclient_hotspot" % "0.6.0",
     libraryDependencies +="io.prometheus" % "simpleclient_httpserver" % "0.6.0",
