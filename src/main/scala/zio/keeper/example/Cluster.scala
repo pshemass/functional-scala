@@ -13,7 +13,7 @@ import zio.macros.delegate._
 import zio.nio._
 import zio.system._
 
-object ClusterExample2 extends zio.ManagedApp {
+object Cluster extends zio.ManagedApp {
 
   val withSlf4j = enrichWith[Logging[String]](
     new Slf4jLogger.Live {
@@ -40,9 +40,8 @@ object ClusterExample2 extends zio.ManagedApp {
     ZManaged.environment[zio.ZEnv with Logging[String] with Transport with Discovery] @@
       SWIM.withSWIM(port)
 
-  def myEnvironment(port: Int) =
-    (ZIO.environment[zio.ZEnv] @@ withSlf4j >>>
-      withTcpTransport @@ withDiscovery).toManaged_ >>>
+  def dependencies(port: Int) =
+    (ZIO.environment[zio.ZEnv] @@ withSlf4j >>> withTcpTransport @@ withDiscovery).toManaged_ >>>
       membership(port)
 
   override def run(args: List[String]) =
@@ -50,11 +49,11 @@ object ClusterExample2 extends zio.ManagedApp {
       .fromOption(args.headOption)
       .flatMap(port => ZIO.effectTotal(Integer.parseInt(port)))
       .toManaged_
-      .flatMap(myEnvironment) >>> program)).fold(
-      _ => 1,
-      _ => 0
-    )
-      
+      .flatMap(dependencies) >>> program))
+      .fold(
+        _ => 1,
+        _ => 0
+      )
 
   def program =
     for {
